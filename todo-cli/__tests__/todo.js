@@ -13,16 +13,14 @@ describe("Todolist Test Suite", () => {
     add({title: "Test Todo", completed: false, dueDate: new Date().toISOString().slice(0, 10)});
   })
   test("Should add a new todo", () => {
-    const todoItemsCount = all.length;
-    add(
-      {
-        title: "Test Todo",
-        completed: false,
-        dueDate: new Date().toISOString().slice(0, 10)
-      }
-    );
-    expect(all.length).toBe(todoItemsCount + 1);
+    const todoItemsCountBefore = all.length;
+    const newTodo = { title: "Added Todo", completed: false, dueDate: new Date().toISOString().slice(0, 10) };
+    add(newTodo);
+    const todoItemsCountAfter = all.length;
+    expect(todoItemsCountAfter).toBe(todoItemsCountBefore + 1);
+    expect(all[todoItemsCountAfter - 1]).toMatchObject(newTodo);
   });
+  
 
   test("Should retrieve overdue items", () => {
     const overdueItems = overdue();
@@ -42,14 +40,20 @@ describe("Todolist Test Suite", () => {
   });
   
   test("Should format todos using toDisplayableList", () => {
-    const output = toDisplayableList(dueToday());
-    expect(typeof output).toBe("string");
-    expect(output.length).toBeGreaterThan(0);
+    const today = new Date().toISOString().slice(0, 10);
+    const sampleTodo = { title: "Sample", completed: false, dueDate: today };
+    const formatted = toDisplayableList([sampleTodo]);
+    expect(formatted).toBe("[ ] Sample ");
   });
+  
 
   test("Should mark a todo as complete", () => {
-    expect(all[0].completed).toBe(false);
-    markAsComplete(0);
-    expect(all[0].completed).toBe(true);
-  })
+    const initialLength = all.length;
+    add({ title: "Complete me", completed: false, dueDate: new Date().toISOString().slice(0, 10) });
+    const index = all.length - 1;
+    expect(all[index].completed).toBe(false);
+    markAsComplete(index);
+    expect(all[index].completed).toBe(true);
+  });
+  
 })
