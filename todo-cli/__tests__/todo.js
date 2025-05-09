@@ -23,7 +23,7 @@ describe("Todolist Test Suite", () => {
   });
   
   test("Should retrieve overdue items", () => {
-    const today = new Date().toISOString().slice(0, 10);
+    //const today = new Date().toISOString().slice(0, 10);
     const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
   
     // Add a known overdue todo
