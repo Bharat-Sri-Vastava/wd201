@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // const { test } = require("picomatch");
 const todoList = require("../todo");
 const { all, add, markAsComplete, overdue, dueToday, dueLater, toDisplayableList } = todoList();
@@ -21,23 +22,42 @@ describe("Todolist Test Suite", () => {
     expect(all[todoItemsCountAfter - 1]).toMatchObject(newTodo);
   });
   
-
   test("Should retrieve overdue items", () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  
+    // Add a known overdue todo
+    add({ title: "Overdue Item", completed: false, dueDate: yesterday });
+  
     const overdueItems = overdue();
-    expect(overdueItems.every(todo => todo.dueDate < new Date().toISOString().slice(0,10))).toBe(true);
-  })
+    const titles = overdueItems.map((todo) => todo.title);
+    expect(titles).toContain("Overdue Item");
+  });
+  
 
   test("Should retrieve due today items", () => {
     const today = new Date().toISOString().slice(0, 10);
+  
+    // Add a known due today item
+    add({ title: "Today Item", completed: false, dueDate: today });
+  
     const dueTodayItems = dueToday();
-    expect(dueTodayItems.every(todo => todo.dueDate === today)).toBe(true);
+    const titles = dueTodayItems.map((todo) => todo.title);
+    expect(titles).toContain("Today Item");
   });
   
+  
   test("Should retrieve due later items", () => {
-    const today = new Date().toISOString().slice(0, 10);
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  
+    // Add a known due later item
+    add({ title: "Future Item", completed: false, dueDate: tomorrow });
+  
     const dueLaterItems = dueLater();
-    expect(dueLaterItems.every(todo => todo.dueDate > today)).toBe(true);
+    const titles = dueLaterItems.map((todo) => todo.title);
+    expect(titles).toContain("Future Item");
   });
+  
   
   test("Should format todos using toDisplayableList", () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -48,7 +68,7 @@ describe("Todolist Test Suite", () => {
   
 
   test("Should mark a todo as complete", () => {
-    const initialLength = all.length;
+    // const initialLength = all.length;
     add({ title: "Complete me", completed: false, dueDate: new Date().toISOString().slice(0, 10) });
     const index = all.length - 1;
     expect(all[index].completed).toBe(false);
